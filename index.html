@@ -385,8 +385,30 @@
         datos.ronda2++;
       }
     }
+// ← Pega aquí el bloque de código
 
-    function generarTurno() {
+const festivosMadrid2026 = [
+  ...
+];
+
+function fechaAClave(fecha) {
+  ...
+}
+
+function esDiaNoLaborable(fecha) {
+  ...
+}
+
+function obtenerFechaTurno() {
+  ...
+}
+
+// ↓ Aquí empieza lo que ya tenías
+function generarTurno() {
+    ...
+}
+  
+      function generarTurno() {
       if (datos.cocina1.length === 0 || datos.cocina2.length === 0) {
         alert("Ambas cocinas deben tener al menos un miembro.");
         return;
@@ -409,7 +431,7 @@
         turno: datos.turnoGlobal,
         ronda1: datos.ronda1,
         ronda2: datos.ronda2,
-        fecha: new Date().toLocaleDateString("es-ES"),
+        fecha: obtenerFechaTurno().toLocaleDateString("es-ES"),
         cocina1: responsable1,
         cocina2: responsable2
       };

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMFRESH - Turnos de Cocina</title>
+  <style>
+    :root {
+      --green-dark: #0f3d2e;
+      --green: #1f7a4d;
+      --green-light: #dff3e7;
+      --lime: #b7d63b;
+      --orange: #f59e0b;
+      --bg: #f5f7f2;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --danger: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(183,214,59,0.25), transparent 35%),
+        radial-gradient(circle at top right, rgba(31,122,77,0.18), transparent 30%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      color: white;
+      padding: 28px 20px;
+      text-align: center;
+      border-bottom: 6px solid var(--lime);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: 1px;
+    }
+
+    header p { margin: 8px 0 0; opacity: 0.95; }
+
+    main {
+      max-width: 1150px;
+      margin: 28px auto;
+      padding: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 22px rgba(15, 61, 46, 0.12);
+      border: 1px solid rgba(31,122,77,0.12);
+    }
+
+    h2 { margin-top: 0; color: var(--green-dark); }
+
+    .badge {
+      display: inline-block;
+      background: var(--green-light);
+      color: var(--green-dark);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    li {
+      margin-bottom: 8px;
+      background: #f8fafc;
+      border-left: 4px solid var(--lime);
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 11px;
+      margin-top: 8px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+    }
+
+    button {
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 15px;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-right: 6px;
+      font-weight: bold;
+    }
+
+    button:hover { filter: brightness(0.95); }
+
+    .danger { background: var(--danger); }
+    .orange { background: var(--orange); }
+
+    .round-box {
+      font-size: 18px;
+      line-height: 1.8;
+      background: linear-gradient(135deg, #ecfdf5, #f7fee7);
+      border-left: 6px solid var(--green);
+      padding: 17px;
+      border-radius: 12px;
+      margin-top: 15px;
+    }
+
+    .notice {
+      background: #fff7ed;
+      border-left: 5px solid var(--orange);
+      padding: 12px;
+      border-radius: 10px;
+      color: #7c2d12;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: white;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      padding: 11px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--green-dark);
+      color: white;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .member-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .delete-small {
+      background: var(--danger);
+      padding: 5px 8px;
+      font-size: 12px;
+      margin-top: 0;
+    }
+
+    .status {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .status div {
+      background: #f1f5f9;
+      padding: 10px;
+      border-radius: 10px;
+      flex: 1;
+      min-width: 180px;
+      border-left: 4px solid var(--green);
+    }
+
+    .logo {
+      font-weight: 900;
+      font-size: 15px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .admin-panel {
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+    }
+
+    .admin-only { display: none; }
+    body.admin-mode .admin-only { display: inline-block; }
+    body.admin-mode div.admin-only { display: block; }
+
+    .admin-status {
+      font-weight: bold;
+      color: var(--green-dark);
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">AMFRESH · BLOOM · IBERIA</div>
+    <h1>Turnos de Cocina</h1>
+    <p>Rotación automática únicamente los viernes · Grupos de 3 personas</p>
+  </header>
+
+  <main>
+    <div class="card">
+      <span class="badge">Sistema automático por viernes</span>
+      <h2>Generar grupo de cocina</h2>
+      <p class="small">
+        Cada turno se asigna solo en viernes. Cada grupo tiene 3 personas.
+        Cuando termina una ronda completa, se crea automáticamente una nueva lista mezclada.
+      </p>
+
+      <div class="admin-panel">
+        <strong>Modo de acceso</strong>
+        <p class="small">Los empleados pueden ver los turnos. Solo el administrador puede modificar o generar turnos.</p>
+        <input id="claveAdmin" type="password" placeholder="Contraseña de administrador" />
+        <button onclick="activarAdmin()">Entrar como administrador</button>
+        <button class="danger admin-only" onclick="salirAdmin()">Salir de administrador</button>
+        <div class="admin-status" id="estadoAdmin">Modo empleado: solo lectura</div>
+      </div>
+
+      <button class="admin-only" onclick="generarTurno()">Generar siguiente viernes</button>
+      <button class="orange admin-only" onclick="crearNuevaRondaManual()">Crear nueva ronda ahora</button>
+      <button class="danger admin-only" onclick="reiniciarTodo()">Reiniciar todo</button>
+
+      <div class="round-box" id="resultadoRonda">
+        Pulsa “Generar siguiente viernes” para empezar.
+      </div>
+
+      <div class="status">
+        <div>
+          <strong>Estado de la ronda</strong><br>
+          <span id="estadoTurnos"></span>
+        </div>
+        <div>
+          <strong>Próximo viernes previsto</strong><br>
+          <span id="estadoFecha"></span>
+        </div>
+      </div>
+
+      <div class="notice">
+        Si al final de una ronda quedan menos de 3 personas, el sistema completa el grupo con la nueva ronda para mantener siempre grupos de 3.
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top: 20px;">
+      <div class="card">
+        <h2>Lista actual</h2>
+        <p class="small">Orden actual de la ronda en curso.</p>
+        <ul id="listaMiembros"></ul>
+
+        <div class="admin-only">
+          <input id="nuevoMiembro" placeholder="Añadir miembro" />
+          <button onclick="añadirMiembro()">Añadir</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Resumen</h2>
+        <p id="resumen" class="small"></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+      <h2>Historial de turnos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Turno</th>
+            <th>Ronda</th>
+            <th>Fecha</th>
+            <th>Grupo de cocina</th>
+          </tr>
+        </thead>
+        <tbody id="historial"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const miembrosBase = [
+      "Nathalia (BLOOM)",
+      "Pau (AMFRESH IBERIA)",
+      "César (BLOOM)",
+      "Cristina (AMFRESH GROUP)",
+      "Miguel (AMFRESH IBERIA)",
+      "Jaime Díaz (AMFRESH IBERIA)",
+      "Paula (AMFRESH IBERIA)",
+      "Sança (AMFRESH GROUP)",
+      "Maria (BLOOM)",
+      "Eva (BLOOM)",
+      "Marie-Anne (BLOOM)",
+      "Katy (BLOOM)",
+      "Irantzu (AMFRESH IBERIA)",
+      "Pablo (AMFRESH GROUP)",
+      "Rafaela (AMFRESH GROUP)",
+      "Diego (AMFRESH GROUP)",
+      "Carolina (AMFRESH GROUP)",
+      "Sara (AMFRESH GROUP)",
+      "Jaime Muñoz (AMFRESH GROUP)",
+      "Silvia (AMFRESH GROUP)",
+      "Javi (AMFRESH GROUP)",
+      "Regina (AMFRESH GROUP)",
+      "Jorge (AMFRESH GROUP)",
+      "Santi (AMFRESH GROUP)",
+      "Ana (AMFRESH GROUP)",
+      "Michelle (AMFRESH GROUP)"
+    ];
+
+    const CLAVE_ADMIN = "amfresh2026";
+
+    const festivosMadrid2026 = [
+      "2026-01-01", "2026-01-06", "2026-04-02", "2026-04-03",
+      "2026-05-01", "2026-05-02", "2026-05-15", "2026-08-15",
+      "2026-10-12", "2026-11-02", "2026-11-09",
+      "2026-12-07", "2026-12-08", "2026-12-25"
+    ];
+
+    const datosIniciales = {
+      miembros: mezclarLista([...miembrosBase]),
+      indice: 0,
+      ronda: 1,
+      historial: [],
+      turnoGlobal: 0,
+      proximaFechaTurno: null
+    };
+
+    let datos = cargarDatos();
+
+    function cargarDatos() {
+      const guardado = localStorage.getItem("turnosCocinaViernesAMFRESH");
+      if (guardado) return JSON.parse(guardado);
+      return datosIniciales;
+    }
+
+    function guardarDatos() {
+      localStorage.setItem("turnosCocinaViernesAMFRESH", JSON.stringify(datos));
+    }
+
+    function mezclarLista(lista) {
+      for (let i = lista.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [lista[i], lista[j]] = [lista[j], lista[i]];
+      }
+      return lista;
+    }
+
+    function aplicarModoAdmin() {
+      const activo = sessionStorage.getItem("modoAdminCocinaAMFRESH") === "true";
+      document.body.classList.toggle("admin-mode", activo);
+
+      const estado = document.getElementById("estadoAdmin");
+      if (estado) estado.textContent = activo ? "Modo administrador activo" : "Modo empleado: solo lectura";
+    }
+
+    function activarAdmin() {
+      const input = document.getElementById("claveAdmin");
+      const clave = input.value.trim();
+
+      if (clave === CLAVE_ADMIN) {
+        sessionStorage.setItem("modoAdminCocinaAMFRESH", "true");
+        input.value = "";
+        aplicarModoAdmin();
+        pintarTodo();
+      } else {
+        alert("Contraseña incorrecta.");
+      }
+    }
+
+    function salirAdmin() {
+      sessionStorage.removeItem("modoAdminCocinaAMFRESH");
+      aplicarModoAdmin();
+      pintarTodo();
+    }
+
+    function esAdmin() {
+      return sessionStorage.getItem("modoAdminCocinaAMFRESH") === "true";
+    }
+
+    function exigirAdmin() {
+      if (!esAdmin()) {
+        alert("Solo el administrador puede realizar esta acción.");
+        return false;
+      }
+      return true;
+    }
+
+    function limpiarHora(fecha) {
+      return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+    }
+
+    function claveFecha(fecha) {
+      const año = fecha.getFullYear();
+      const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+      const dia = String(fecha.getDate()).padStart(2, "0");
+      return `${año}-${mes}-${dia}`;
+    }
+
+    function esFestivoMadrid(fecha) {
+      return festivosMadrid2026.includes(claveFecha(fecha));
+    }
+
+    function esViernesValido(fecha) {
+      return fecha.getDay() === 5 && !esFestivoMadrid(fecha);
+    }
+
+    function siguienteViernesValido(fecha) {
+      const resultado = limpiarHora(fecha);
+      resultado.setDate(resultado.getDate() + 1);
+
+      while (!esViernesValido(resultado)) {
+        resultado.setDate(resultado.getDate() + 1);
+      }
+
+      return resultado;
+    }
+
+    function primerViernesValidoDesdeHoy() {
+      const resultado = limpiarHora(new Date());
+
+      while (!esViernesValido(resultado)) {
+        resultado.setDate(resultado.getDate() + 1);
+      }
+
+      return resultado;
+    }
+
+    function formatearFecha(fecha) {
+      return fecha.toLocaleDateString("es-ES");
+    }
+
+    function leerFechaEspañola(texto) {
+      const partes = texto.split("/");
+      return new Date(Number(partes[2]), Number(partes[1]) - 1, Number(partes[0]));
+    }
+
+    function asegurarProximaFechaTurno() {
+      if (!datos.proximaFechaTurno) {
+        datos.proximaFechaTurno = formatearFecha(primerViernesValidoDesdeHoy());
+        guardarDatos();
+      }
+    }
+
+    function obtenerFechaTurnoActual() {
+      asegurarProximaFechaTurno();
+      return leerFechaEspañola(datos.proximaFechaTurno);
+    }
+
+    function crearNuevaRonda() {
+      const anteriorPrimero = datos.miembros[0];
+      datos.miembros = mezclarLista([...datos.miembros]);
+
+      if (datos.miembros.length > 1 && datos.miembros[0] === anteriorPrimero) {
+        datos.miembros.push(datos.miembros.shift());
+      }
+
+      datos.indice = 0;
+      datos.ronda++;
+    }
+
+    function obtenerGrupoDeTres() {
+      let grupo = [];
+
+      while (grupo.length < 3) {
+        if (datos.indice >= datos.miembros.length) {
+          crearNuevaRonda();
+        }
+
+        grupo.push(datos.miembros[datos.indice]);
+        datos.indice++;
+      }
+
+      return grupo;
+    }
+
+    function generarTurno() {
+      if (!exigirAdmin()) return;
+
+      if (datos.miembros.length < 3) {
+        alert("Debe haber al menos 3 miembros para crear un grupo.");
+        return;
+      }
+
+      const fechaTurno = obtenerFechaTurnoActual();
+      const rondaInicial = datos.ronda;
+      const grupo = obtenerGrupoDeTres();
+
+      datos.turnoGlobal++;
+
+      const nuevoTurno = {
+        turno: datos.turnoGlobal,
+        ronda: rondaInicial,
+        fecha: formatearFecha(fechaTurno),
+        grupo: grupo
+      };
+
+      datos.historial.push(nuevoTurno);
+      datos.proximaFechaTurno = formatearFecha(siguienteViernesValido(fechaTurno));
+
+      guardarDatos();
+      pintarTodo();
+
+      document.getElementById("resultadoRonda").innerHTML = `
+        <strong>Turno ${nuevoTurno.turno}</strong><br>
+        Fecha: ${nuevoTurno.fecha}<br>
+        Grupo:<br>
+        1. ${grupo[0]}<br>
+        2. ${grupo[1]}<br>
+        3. ${grupo[2]}<br>
+        <span class="small">Próximo viernes previsto: ${datos.proximaFechaTurno}</span>
+      `;
+    }
+
+    function crearNuevaRondaManual() {
+      if (!exigirAdmin()) return;
+
+      const confirmar = confirm("¿Quieres crear una nueva ronda mezclada?");
+      if (!confirmar) return;
+
+      crearNuevaRonda();
+      guardarDatos();
+      pintarTodo();
+
+      document.getElementById("resultadoRonda").innerHTML = "Nueva ronda creada. El orden de la lista ha cambiado.";
+    }
+
+    function añadirMiembro() {
+      if (!exigirAdmin()) return;
+
+      const input = document.getElementById("nuevoMiembro");
+      const nombre = input.value.trim();
+
+      if (nombre === "") {
+        alert("Escribe un nombre antes de añadir.");
+        return;
+      }
+
+      datos.miembros.push(nombre);
+      input.value = "";
+
+      guardarDatos();
+      pintarTodo();
+    }
+
+    function eliminarMiembro(index) {
+      if (!exigirAdmin()) return;
+
+      const confirmar = confirm("¿Seguro que quieres eliminar este miembro?");
+      if (!confirmar) return;
+
+      datos.miembros.splice(index, 1);
+
+      if (datos.indice > datos.miembros.length) {
+        datos.indice = datos.miembros.length;
+      }
+
+      guardarDatos();
+      pintarTodo();
+    }
+
+    function reiniciarTodo() {
+      if (!exigirAdmin()) return;
+
+      const confirmar = confirm("Esto borrará el historial y empezará con una nueva lista mezclada. ¿Continuar?");
+      if (!confirmar) return;
+
+      localStorage.removeItem("turnosCocinaViernesAMFRESH");
+
+      datos = {
+        miembros: mezclarLista([...miembrosBase]),
+        indice: 0,
+        ronda: 1,
+        historial: [],
+        turnoGlobal: 0,
+        proximaFechaTurno: formatearFecha(primerViernesValidoDesdeHoy())
+      };
+
+      guardarDatos();
+      pintarTodo();
+
+      document.getElementById("resultadoRonda").innerHTML = "Sistema reiniciado con una nueva lista mezclada.";
+    }
+
+    function pintarLista() {
+      const lista = document.getElementById("listaMiembros");
+      lista.innerHTML = "";
+
+      datos.miembros.forEach((nombre, index) => {
+        const actual = index >= datos.indice && index < datos.indice + 3 ? " 👉 próximo grupo" : "";
+
+        lista.innerHTML += `
+          <li>
+            <div class="member-row">
+              <span>${index + 1}. ${nombre}<strong>${actual}</strong></span>
+              <button class="delete-small admin-only" onclick="eliminarMiembro(${index})">Eliminar</button>
+            </div>
+          </li>`;
+      });
+    }
+
+    function pintarHistorial() {
+      const tabla = document.getElementById("historial");
+      tabla.innerHTML = "";
+
+      datos.historial.forEach(item => {
+        tabla.innerHTML += `
+          <tr>
+            <td>${item.turno}</td>
+            <td>${item.ronda}</td>
+            <td>${item.fecha}</td>
+            <td>${item.grupo.map((persona, i) => `${i + 1}. ${persona}`).join("<br>")}</td>
+          </tr>`;
+      });
+    }
+
+    function pintarEstado() {
+      asegurarProximaFechaTurno();
+
+      document.getElementById("estadoTurnos").innerHTML =
+        `Ronda ${datos.ronda} · ${datos.indice}/${datos.miembros.length} personas usadas`;
+
+      document.getElementById("estadoFecha").innerHTML =
+        `${datos.proximaFechaTurno}`;
+    }
+
+    function pintarResumen() {
+      const restantes = Math.max(datos.miembros.length - datos.indice, 0);
+      const gruposRestantes = Math.ceil(restantes / 3);
+
+      document.getElementById("resumen").innerHTML = `
+        Total de miembros: <strong>${datos.miembros.length}</strong><br>
+        Personas usadas en esta ronda: <strong>${datos.indice}</strong><br>
+        Personas restantes hasta nueva ronda: <strong>${restantes}</strong><br>
+        Grupos aproximados restantes: <strong>${gruposRestantes}</strong><br>
+        Último turno generado: <strong>${datos.turnoGlobal}</strong>
+      `;
+    }
+
+    function pintarTodo() {
+      pintarLista();
+      pintarHistorial();
+      pintarEstado();
+      pintarResumen();
+    }
+
+    aplicarModoAdmin();
+    pintarTodo();
+  </script>
+</body>
+</html>
